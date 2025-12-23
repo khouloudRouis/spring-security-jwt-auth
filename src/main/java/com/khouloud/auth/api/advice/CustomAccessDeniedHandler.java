@@ -22,7 +22,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     ) throws IOException, ServletException {
      	var errorResponse = new ErrorResponse(
                 HttpServletResponse.SC_UNAUTHORIZED,
-                "Access Denied: You don't have permission to access this resource."
+                "Access Denied: You don't have permission to access this resource.",
+                null
         );
      	 ObjectMapper mapper = new ObjectMapper();
          response.getWriter().write(mapper.writeValueAsString(errorResponse));

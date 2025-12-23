@@ -11,6 +11,7 @@ import com.khouloud.auth.dto.AuthResponse;
 import com.khouloud.auth.dto.RegisterRequest;
 import com.khouloud.auth.service.AuthService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -20,13 +21,13 @@ public class AuthController {
 	private final AuthService authService;
 
 	@PostMapping("/login")
-	public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+	public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
 		AuthResponse response = authService.login(request);
 		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+	public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
 		AuthResponse response = authService.register(request);
 		return ResponseEntity.ok(response);
 	}

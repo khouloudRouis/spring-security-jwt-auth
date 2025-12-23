@@ -50,7 +50,7 @@ public class AuthApiIntegrationTest extends BaseIntegrationTest {
 	}
 	
 	@Test
-	void testAccessRegisterEndpoint_WithNoRoles_ShouldReturn401() throws Exception {
+	void testAccessRegisterEndpoint_WithNoRoles_ShouldReturn400() throws Exception {
 		var mockedRequest = new RegisterRequest("test full name","test@test","test", null);
 		
 		when(userRepository.save(any())).thenReturn(new User());
@@ -58,7 +58,7 @@ public class AuthApiIntegrationTest extends BaseIntegrationTest {
 		
 		mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(mockedRequest)))
-		.andExpect(status().isInternalServerError());
+		.andExpect(status().isBadRequest());
 	}
 	
 	@Test

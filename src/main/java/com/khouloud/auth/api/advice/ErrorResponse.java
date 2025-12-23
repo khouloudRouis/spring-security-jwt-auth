@@ -1,3 +1,5 @@
 package com.khouloud.auth.api.advice;
 
-public record ErrorResponse (int status, String Message) {}
+import java.util.Map;
+
+public record ErrorResponse (int status, String Message, Map<String, String> errors) {}
