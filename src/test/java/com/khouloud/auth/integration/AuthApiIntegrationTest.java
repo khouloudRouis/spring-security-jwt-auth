@@ -62,14 +62,14 @@ public class AuthApiIntegrationTest extends BaseIntegrationTest {
 	}
 	
 	@Test
-	void testAccessRegisterEndpoint_WithCorrectUser_ShouldReturn200() throws Exception {
+	void testAccessRegisterEndpoint_WithCorrectUser_ShouldReturn201() throws Exception {
 		when(roleRepository.findByName(any())).thenReturn(Optional.of(new Role()));
 		when(userRepository.save(any())).thenReturn(new User());
 		var mockedRequest = new RegisterRequest("test full name","test@test","test", new HashSet<>(List.of("USER")));
  
 		mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(mockedRequest)))
-		.andExpect(status().isOk());
+		.andExpect(status().isCreated());
 	}
 	
 	@Test
