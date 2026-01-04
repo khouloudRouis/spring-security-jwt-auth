@@ -26,9 +26,9 @@ public class AuthApiIntegrationTest extends BaseIntegrationTest {
 	void testAccessLoginEndpoint_WithKnownUser_ShouldReturn200() throws Exception {
 		var password ="$2a$10$JnEShy0Smx1aP9n.N6ct3eKViHKPbdbojTTTREEVAKe8miTaKgkWi";
 		var mockedRole = Role.builder().name("USER").build();
-		var mockedUser = User.builder().email("user_test").password(password)
+		var mockedUser = User.builder().email("user@test").password(password)
 				.roles(new HashSet<>(Arrays.asList(mockedRole))).build();	
-		var request = new AuthRequest("user_test","user_test");
+		var request = new AuthRequest("user@test","user_test");
 		
 		when(userRepository.findByEmail(any())).thenReturn(Optional.of(mockedUser));
 		when(roleRepository.findByName(any())).thenReturn(Optional.of(mockedRole));
@@ -40,9 +40,9 @@ public class AuthApiIntegrationTest extends BaseIntegrationTest {
 	
 	@Test
 	void testAccessLoginEndpoint_WithUnkownUser_ShouldReturn401() throws Exception {
-		var mockedRequest = new AuthRequest("unkown", "unkown");
+		var mockedRequest = new AuthRequest("email@email", "unkown");
 		
-		when(userRepository.findByEmail("test2")).thenReturn(Optional.empty());
+		when(userRepository.findByEmail("email@email")).thenReturn(Optional.empty());
 	
 		mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(mockedRequest)))
