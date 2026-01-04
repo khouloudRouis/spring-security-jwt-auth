@@ -14,7 +14,9 @@ import com.khouloud.auth.service.AuthService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -23,12 +25,14 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
+		log.info("Login attempt for username={}", request.email());
 		AuthResponse response = authService.login(request);
 		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping("/register")
 	public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+		log.info("Registration attempt for username={}", request.email());
 		AuthResponse response = authService.register(request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}

@@ -9,7 +9,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.khouloud.auth.api.advice.CustomAccessDeniedHandler;
+import com.khouloud.auth.api.exception.CustomAccessDeniedHandler;
 
 import lombok.RequiredArgsConstructor;
 

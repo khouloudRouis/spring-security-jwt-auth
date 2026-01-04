@@ -1,4 +1,4 @@
-package com.khouloud.auth.api.advice;
+package com.khouloud.auth.api.exception;
 
 import java.time.Instant;
 import java.util.Map;

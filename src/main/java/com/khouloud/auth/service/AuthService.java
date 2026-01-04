@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.khouloud.auth.api.exception.RoleNotFoundException;
+import com.khouloud.auth.api.exception.UserAlreadyExistsException;
 import com.khouloud.auth.dto.AuthRequest;
 import com.khouloud.auth.dto.AuthResponse;
 import com.khouloud.auth.dto.RegisterRequest;
@@ -19,7 +21,9 @@ import com.khouloud.auth.repository.UserRepository;
 import com.khouloud.auth.security.JwtService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AuthService {
@@ -32,17 +36,22 @@ public class AuthService {
 	private final UserRepository userRepository;
 
 	public AuthResponse login(AuthRequest request) {
+		log.debug("Authenticating user");
 		authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 		var userDetails = userDetailsService.loadUserByUsername(request.email());
 		var jwt = jwtService.generateToken(userDetails);
+		log.info("User authenticated successfully");
 		return new AuthResponse(jwt);
 	}
 
 	public AuthResponse register(RegisterRequest request) {
+		  if (userRepository.findByEmail(request.email()).isPresent()) {
+		        throw new UserAlreadyExistsException("User with email " + request.email() + " already exists");
+		    }
 		Set<Role> roles = request.roles().stream()
 				.map(roleName -> roleRepository.findByName(roleName)
-						.orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
+						.orElseThrow(() -> new RoleNotFoundException(roleName)))
 				.collect(Collectors.toSet());
 
 		var user = User.createUser(request.fullName(), request.email(), 
@@ -51,6 +60,7 @@ public class AuthService {
 		userRepository.save(user);
 		
 		var jwt = jwtService.generateToken(user);
+		log.info("Registration successful for username={}", request.email());
 		return new AuthResponse(jwt);
 
 	}
