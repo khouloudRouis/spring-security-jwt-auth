@@ -11,12 +11,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import io.jsonwebtoken.JwtException;
 
 import java.io.IOException;
 
@@ -38,12 +36,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		try {
 			final String jwt = authHeader.substring(7);
 			final String userName = jwtService.extractUsername(jwt);
 
 			if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-				try {
 					UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
 					if (jwtService.isTokenValid(jwt, userDetails)) {
 						var authToken = new UsernamePasswordAuthenticationToken(userDetails, null,
@@ -52,18 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 						SecurityContextHolder.getContext().setAuthentication(authToken);
 						log.debug("JWT token validated successfully for user: {}", userName);
 					}
-				} catch (UsernameNotFoundException ex) {
-					log.warn("User not found: {} ", userName);
-				}
 			}
-		} catch (JwtException ex) {
-			log.warn("Invalid JWT token from IP: {} for URI: {} - {}", request.getRemoteAddr(),
-					request.getRequestURI(), ex.getClass().getSimpleName());
-		} catch (Exception ex) {
-			log.error("Unexpected error processing JWT token from IP: {} for URI: {}", request.getRemoteAddr(),
-					request.getRequestURI(), ex);
-		}
-
 		filterChain.doFilter(request, response);
 	}
 
